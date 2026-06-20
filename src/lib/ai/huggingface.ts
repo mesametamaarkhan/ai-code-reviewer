@@ -1,5 +1,4 @@
-const MODEL =
-  "Qwen/Qwen2.5-Coder-32B-Instruct";
+const MODEL = "Qwen/Qwen2.5-Coder-7B-Instruct";
 
 export async function queryModel(
   prompt: string
@@ -7,33 +6,37 @@ export async function queryModel(
   const response = await fetch(
     "https://router.huggingface.co/v1/chat/completions",
     {
-        method: "POST",
-        headers: {
+      method: "POST",
+      headers: {
         Authorization: `Bearer ${process.env.HF_API_KEY}`,
         "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-        model: "Qwen/Qwen2.5-Coder-7B-Instruct",
+      },
+      body: JSON.stringify({
+        model: MODEL,
         messages: [
-            {
+          {
             role: "user",
             content: prompt,
-            },
+          },
         ],
-        }),
+        temperature: 0.2,
+        max_tokens: 800,
+      }),
     }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error(
+      "HF Error:",
+      JSON.stringify(data, null, 2)
     );
 
-    if (!response.ok) {
-        const errorText = await response.text();
+    throw new Error(
+      `Hugging Face Error ${response.status}`
+    );
+  }
 
-        console.error("HF Status:", response.status);
-        console.error("HF Response:", errorText);
-
-        throw new Error(
-            `Hugging Face Error ${response.status}: ${errorText}`
-        );
-    }
-
-  return response.json();
+  return data;
 }
