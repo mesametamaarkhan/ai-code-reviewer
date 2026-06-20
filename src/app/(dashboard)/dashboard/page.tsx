@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardStats } from "@/actions/dashboard";
-import LogoutButton from "@/components/logout-button";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
