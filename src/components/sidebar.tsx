@@ -19,6 +19,10 @@ const links = [
     href: "/reviews",
   },
   {
+    name: "New Review",
+    href: "/reviews/new",
+  },
+  {
     name: "Settings",
     href: "/settings",
   },
