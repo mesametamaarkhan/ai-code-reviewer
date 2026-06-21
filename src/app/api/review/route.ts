@@ -19,6 +19,18 @@ export async function POST(
       projectId,
     } = body;
 
+    if (!code?.trim()) {
+      return NextResponse.json(
+        {
+          error:
+            "Code is required",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     const review =
       await reviewCode(
         code,

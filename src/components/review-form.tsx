@@ -1,7 +1,7 @@
 "use client";
 
 import { ReviewResult } from "@/lib/ai/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import ReviewResultCard from "./review-result";
 import { detectLanguage, } from "@/lib/language-detection";
@@ -39,6 +39,43 @@ export default function ReviewForm({
   const [result, setResult] =
     useState<ReviewResult | null>(null);
 
+  const loadingMessages = [
+    "Analyzing code...",
+    "Checking for bugs...",
+    "Reviewing security issues...",
+    "Inspecting performance...",
+    "Generating suggestions...",
+  ];
+
+  const [loadingMessage, setLoadingMessage] =
+    useState(
+      loadingMessages[0]
+    );
+
+    useEffect(() => {
+      if (!loading) {
+        return;
+      }
+
+      let index = 0;
+
+      const interval =
+        setInterval(() => {
+          index =
+            (index + 1) %
+            loadingMessages.length;
+
+          setLoadingMessage(
+            loadingMessages[index]
+          );
+        }, 1200);
+
+      return () =>
+        clearInterval(
+          interval
+        );
+    }, [loading]);
+
   async function handleReview() {
     if (!projectId) {
         alert(
@@ -70,6 +107,13 @@ export default function ReviewForm({
 
       const data =
         await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ??
+            "Something went wrong"
+        );
+      }
 
       setResult(data);
     } catch (error) {
@@ -214,9 +258,21 @@ export default function ReviewForm({
         className="bg-black text-white px-4 py-2 rounded"
       >
         {loading
-          ? "Reviewing..."
+          ? loadingMessage
           : "Review Code"}
       </button>
+
+      {loading && (
+        <div className="rounded-lg border p-4">
+          <p className="font-medium">
+            {loadingMessage}
+          </p>
+
+          <div className="mt-3 h-2 overflow-hidden rounded bg-muted">
+            <div className="h-full animate-pulse bg-foreground w-2/3" />
+          </div>
+        </div>
+      )}
 
       {result && (
         <ReviewResultCard
