@@ -4,6 +4,7 @@ import { ReviewResult } from "@/lib/ai/types";
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import ReviewResultCard from "./review-result";
+import { detectLanguage, } from "@/lib/language-detection";
 
 interface Project {
   id: string;
@@ -78,6 +79,31 @@ export default function ReviewForm({
     setLoading(false);
   }
 
+  async function handleFileUpload(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const file =
+      event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const text =
+      await file.text();
+
+    setCode(text);
+
+    const detectedLanguage =
+      detectLanguage(
+        file.name
+      );
+
+    setLanguage(
+      detectedLanguage
+    );
+  }
+
   return (
     <div className="p-10 space-y-6">
       <h1 className="text-4xl font-bold">
@@ -130,6 +156,32 @@ export default function ReviewForm({
 
         <option>java</option>
       </select>
+
+      <div>
+        <label className="block mb-2 text-sm font-medium">
+          Upload Source File
+        </label>
+
+        <input
+          type="file"
+          accept="
+            .ts,
+            .tsx,
+            .js,
+            .jsx,
+            .py,
+            .java,
+            .go,
+            .rs,
+            .cpp,
+            .c
+          "
+          onChange={
+            handleFileUpload
+          }
+          className="block w-full"
+        />
+      </div>
 
       <div className="border rounded overflow-hidden">
         <Editor
