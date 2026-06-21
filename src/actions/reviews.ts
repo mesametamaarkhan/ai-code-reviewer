@@ -78,3 +78,31 @@ export async function getReviewById(
 
   return data;
 }
+
+export async function getProjectReviews(
+  projectId: string
+) {
+  const supabase =
+    await createClient();
+
+  const { data, error } =
+    await supabase
+      .from("reviews")
+      .select("*")
+      .eq(
+        "project_id",
+        projectId
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false,
+        }
+      );
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

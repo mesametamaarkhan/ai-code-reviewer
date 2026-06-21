@@ -3,6 +3,7 @@
 import { ReviewResult } from "@/lib/ai/types";
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
+import ReviewResultCard from "./review-result";
 
 interface Project {
   id: string;
@@ -11,10 +12,12 @@ interface Project {
 
 interface ReviewFormProps {
   projects: Project[];
+  initialProjectId?: string;
 }
 
 export default function ReviewForm({
   projects,
+  initialProjectId,
 }: ReviewFormProps) {
   const [code, setCode] =
     useState("");
@@ -23,9 +26,11 @@ export default function ReviewForm({
     useState("typescript");
 
     const [projectId, setProjectId] =
-  useState(
-    projects[0]?.id ?? ""
-  );
+      useState(
+        initialProjectId ??
+        projects[0]?.id ??
+        ""
+    );
 
   const [loading, setLoading] =
     useState(false);
@@ -162,13 +167,9 @@ export default function ReviewForm({
       </button>
 
       {result && (
-        <pre className="border rounded p-4 overflow-auto">
-          {JSON.stringify(
-            result,
-            null,
-            2
-          )}
-        </pre>
+        <ReviewResultCard
+          review={result}
+        />
       )}
     </div>
   );
