@@ -2,6 +2,7 @@
 
 import { ReviewResult } from "@/lib/ai/types";
 import { useState } from "react";
+import Editor from "@monaco-editor/react";
 
 interface Project {
   id: string;
@@ -125,15 +126,28 @@ export default function ReviewForm({
         <option>java</option>
       </select>
 
-      <textarea
-        value={code}
-        onChange={(e) =>
-          setCode(
-            e.target.value
-          )
-        }
-        className="w-full h-96 border p-4 rounded"
-      />
+      <div className="border rounded overflow-hidden">
+        <Editor
+          height="500px"
+          language={language}
+          value={code}
+          onChange={(value) =>
+            setCode(value ?? "")
+          }
+          theme="vs-dark"
+          options={{
+            minimap: {
+              enabled: false,
+            },
+
+            fontSize: 14,
+
+            automaticLayout: true,
+
+            scrollBeyondLastLine: false,
+          }}
+        />
+      </div>
 
       <button
         onClick={
