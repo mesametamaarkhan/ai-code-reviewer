@@ -28,7 +28,7 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-5">
         <div className="rounded-lg border p-6">
           <h2 className="text-sm text-muted-foreground">
             Projects
@@ -58,6 +58,26 @@ export default async function DashboardPage() {
             {stats.averageScore}
           </p>
         </div>
+
+        <div className="rounded-lg border p-6">
+          <h2 className="text-sm text-muted-foreground">
+            Highest Score
+          </h2>
+
+          <p className="mt-3 text-4xl font-bold">
+            {stats.highestScore}
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-lg border p-6">
+        <h2 className="text-sm text-muted-foreground">
+          Top Language
+        </h2>
+
+        <p className="mt-3 text-2xl font-bold">
+          {stats.mostUsedLanguage}
+        </p>
       </div>
 
       <div className="mt-10 rounded-lg border p-6">
@@ -68,10 +88,25 @@ export default async function DashboardPage() {
         {stats.latestReview ? (
           <div className="mt-4">
             <p>
-              Score:{" "}
+              Project:
+              {" "}
+              <span className="font-semibold">
+                {stats.latestReview.projects?.[0]?.name}
+              </span>
+            </p>
+
+            <p className="mt-2">
+              Score:
+              {" "}
               <span className="font-bold">
                 {stats.latestReview.score}
               </span>
+            </p>
+
+            <p className="mt-2">
+              Language:
+              {" "}
+              {stats.latestReview.language}
             </p>
 
             <p className="text-sm text-muted-foreground">
@@ -84,6 +119,45 @@ export default async function DashboardPage() {
           <p className="mt-4 text-muted-foreground">
             No reviews yet.
           </p>
+        )}
+      </div>
+
+      <div className="mt-10 rounded-lg border p-6">
+        <h2 className="text-xl font-semibold mb-4">
+          Recent Reviews
+        </h2>
+
+        {stats.recentReviews.length === 0 ? (
+          <p className="text-muted-foreground">
+            No reviews yet.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {stats.recentReviews.map(
+              (review) => (
+                <div
+                  key={review.id}
+                  className="rounded border p-4"
+                >
+                  <p className="font-medium">
+                    {review.projects?.[0]?.name}
+                  </p>
+
+                  <div className="mt-2 flex gap-4 text-sm text-muted-foreground">
+                    <span>
+                      Score:
+                      {" "}
+                      {review.score}
+                    </span>
+
+                    <span>
+                      {review.language}
+                    </span>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
         )}
       </div>
     </div>
