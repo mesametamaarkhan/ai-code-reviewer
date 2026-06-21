@@ -31,3 +31,50 @@ export async function createReview({
     throw error;
   }
 }
+
+export async function getReviews() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select(`
+      *,
+      projects (
+        id,
+        name
+      )
+    `)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getReviewById(
+  reviewId: string
+) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select(`
+      *,
+      projects (
+        id,
+        name
+      )
+    `)
+    .eq("id", reviewId)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
