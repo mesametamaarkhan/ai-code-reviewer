@@ -4,7 +4,7 @@ import { ReviewResult } from "@/lib/ai/types";
 import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import ReviewResultCard from "./review-result";
-import { detectLanguage, } from "@/lib/language-detection";
+import { detectLanguage } from "@/lib/language-detection";
 
 interface Project {
   id: string;
@@ -20,24 +20,17 @@ export default function ReviewForm({
   projects,
   initialProjectId,
 }: ReviewFormProps) {
-  const [code, setCode] =
-    useState("");
+  const [code, setCode] = useState("");
 
-  const [language, setLanguage] =
-    useState("typescript");
+  const [language, setLanguage] = useState("typescript");
 
-    const [projectId, setProjectId] =
-      useState(
-        initialProjectId ??
-        projects[0]?.id ??
-        ""
-    );
+  const [projectId, setProjectId] = useState(
+    initialProjectId ?? projects[0]?.id ?? "",
+  );
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [result, setResult] =
-    useState<ReviewResult | null>(null);
+  const [result, setResult] = useState<ReviewResult | null>(null);
 
   const loadingMessages = [
     "Analyzing code...",
@@ -47,72 +40,50 @@ export default function ReviewForm({
     "Generating suggestions...",
   ];
 
-  const [loadingMessage, setLoadingMessage] =
-    useState(
-      loadingMessages[0]
-    );
+  const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
 
-    useEffect(() => {
-      if (!loading) {
-        return;
-      }
+  useEffect(() => {
+    if (!loading) {
+      return;
+    }
 
-      let index = 0;
+    let index = 0;
 
-      const interval =
-        setInterval(() => {
-          index =
-            (index + 1) %
-            loadingMessages.length;
+    const interval = setInterval(() => {
+      index = (index + 1) % loadingMessages.length;
 
-          setLoadingMessage(
-            loadingMessages[index]
-          );
-        }, 1200);
+      setLoadingMessage(loadingMessages[index]);
+    }, 1200);
 
-      return () =>
-        clearInterval(
-          interval
-        );
-    }, [loading]);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   async function handleReview() {
     if (!projectId) {
-        alert(
-            "Please select a project"
-        );
-        return;
+      alert("Please select a project");
+      return;
     }
     setLoading(true);
 
     try {
-      const response =
-        await fetch(
-          "/api/review",
-          {
-            method: "POST",
+      const response = await fetch("/api/review", {
+        method: "POST",
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-            body: JSON.stringify({
-              code,
-              language,
-              projectId,
-            }),
-          }
-        );
+        body: JSON.stringify({
+          code,
+          language,
+          projectId,
+        }),
+      });
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.error ??
-            "Something went wrong"
-        );
+        throw new Error(data.error ?? "Something went wrong");
       }
 
       setResult(data);
@@ -123,78 +94,48 @@ export default function ReviewForm({
     setLoading(false);
   }
 
-  async function handleFileUpload(
-    event: React.ChangeEvent<HTMLInputElement>
-  ) {
-    const file =
-      event.target.files?.[0];
+  async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
 
     if (!file) {
       return;
     }
 
-    const text =
-      await file.text();
+    const text = await file.text();
 
     setCode(text);
 
-    const detectedLanguage =
-      detectLanguage(
-        file.name
-      );
+    const detectedLanguage = detectLanguage(file.name);
 
-    setLanguage(
-      detectedLanguage
-    );
+    setLanguage(detectedLanguage);
   }
 
   return (
     <div className="p-10 space-y-6">
-      <h1 className="text-4xl font-bold">
-        New Review
-      </h1>
+      <h1 className="text-4xl font-bold">New Review</h1>
 
       <select
         value={projectId}
-        onChange={(e) =>
-            setProjectId(
-            e.target.value
-            )
-        }
+        onChange={(e) => setProjectId(e.target.value)}
         className="border p-2 rounded"
-        >
-        <option value="">
-            Select Project
-        </option>
+      >
+        <option value="">Select Project</option>
 
-        {projects.map(
-            (project) => (
-            <option
-                key={project.id}
-                value={project.id}
-            >
-                {project.name}
-            </option>
-            )
-        )}
-        </select>
+        {projects.map((project) => (
+          <option key={project.id} value={project.id}>
+            {project.name}
+          </option>
+        ))}
+      </select>
 
       <select
         value={language}
-        onChange={(e) =>
-          setLanguage(
-            e.target.value
-          )
-        }
+        onChange={(e) => setLanguage(e.target.value)}
         className="border p-2 rounded"
       >
-        <option>
-          typescript
-        </option>
+        <option>typescript</option>
 
-        <option>
-          javascript
-        </option>
+        <option>javascript</option>
 
         <option>python</option>
 
@@ -220,9 +161,7 @@ export default function ReviewForm({
             .cpp,
             .c
           "
-          onChange={
-            handleFileUpload
-          }
+          onChange={handleFileUpload}
           className="block w-full"
         />
       </div>
@@ -232,9 +171,7 @@ export default function ReviewForm({
           height="500px"
           language={language}
           value={code}
-          onChange={(value) =>
-            setCode(value ?? "")
-          }
+          onChange={(value) => setCode(value ?? "")}
           theme="vs-dark"
           options={{
             minimap: {
@@ -251,22 +188,16 @@ export default function ReviewForm({
       </div>
 
       <button
-        onClick={
-          handleReview
-        }
+        onClick={handleReview}
         disabled={loading}
         className="bg-black text-white px-4 py-2 rounded"
       >
-        {loading
-          ? loadingMessage
-          : "Review Code"}
+        {loading ? loadingMessage : "Review Code"}
       </button>
 
       {loading && (
         <div className="rounded-lg border p-4">
-          <p className="font-medium">
-            {loadingMessage}
-          </p>
+          <p className="font-medium">{loadingMessage}</p>
 
           <div className="mt-3 h-2 overflow-hidden rounded bg-muted">
             <div className="h-full animate-pulse bg-foreground w-2/3" />
@@ -274,11 +205,7 @@ export default function ReviewForm({
         </div>
       )}
 
-      {result && (
-        <ReviewResultCard
-          review={result}
-        />
-      )}
+      {result && <ReviewResultCard review={result} />}
     </div>
   );
 }

@@ -2,10 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function createProject(
-  name: string,
-  description: string
-) {
+export async function createProject(name: string, description: string) {
   const supabase = await createClient();
 
   const {
@@ -16,13 +13,11 @@ export async function createProject(
     throw new Error("Unauthorized");
   }
 
-  const { error } = await supabase
-    .from("projects")
-    .insert({
-      user_id: user.id,
-      name,
-      description,
-    });
+  const { error } = await supabase.from("projects").insert({
+    user_id: user.id,
+    name,
+    description,
+  });
 
   if (error) {
     throw error;
@@ -46,9 +41,7 @@ export async function getProjects() {
   return data;
 }
 
-export async function deleteProject(
-  projectId: string
-) {
+export async function deleteProject(projectId: string) {
   const supabase = await createClient();
 
   const { error } = await supabase

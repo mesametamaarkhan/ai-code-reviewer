@@ -1,9 +1,6 @@
-import ReviewForm
-  from "@/components/review-form";
+import ReviewForm from "@/components/review-form";
 
-import {
-  getProjects,
-} from "@/actions/projects";
+import { getProjects } from "@/actions/projects";
 
 export default async function NewReviewPage({
   searchParams,
@@ -12,22 +9,9 @@ export default async function NewReviewPage({
     projectId?: string;
   }>;
 }) {
-  const projects =
-    await getProjects();
+  const projects = await getProjects();
 
-  const {
-    projectId,
-  } =
-    await searchParams;
+  const { projectId } = await searchParams;
 
-  return (
-    <ReviewForm
-      projects={
-        projects
-      }
-      initialProjectId={
-        projectId
-      }
-    />
-  );
+  return <ReviewForm projects={projects} initialProjectId={projectId} />;
 }

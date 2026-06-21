@@ -13,21 +13,14 @@ export const ReviewSchema = z.object({
   refactoring: z.array(z.string()),
 });
 
-export function parseReview(
-  raw: string
-) {
-  const jsonMatch =
-    raw.match(/\{[\s\S]*\}/);
+export function parseReview(raw: string) {
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
 
   if (!jsonMatch) {
-    throw new Error(
-      "No JSON found in AI response"
-    );
+    throw new Error("No JSON found in AI response");
   }
 
-  const parsed = JSON.parse(
-    jsonMatch[0]
-  );
+  const parsed = JSON.parse(jsonMatch[0]);
 
   return ReviewSchema.parse(parsed);
 }

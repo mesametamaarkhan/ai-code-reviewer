@@ -1,41 +1,27 @@
 import { NextResponse } from "next/server";
 
-import { reviewCode }
-  from "@/lib/ai/review-service";
+import { reviewCode } from "@/lib/ai/review-service";
 
-import { createReview }
-  from "@/actions/reviews";
+import { createReview } from "@/actions/reviews";
 
-export async function POST(
-  request: Request
-) {
+export async function POST(request: Request) {
   try {
-    const body =
-      await request.json();
+    const body = await request.json();
 
-    const {
-      code,
-      language,
-      projectId,
-    } = body;
+    const { code, language, projectId } = body;
 
     if (!code?.trim()) {
       return NextResponse.json(
         {
-          error:
-            "Code is required",
+          error: "Code is required",
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
-    const review =
-      await reviewCode(
-        code,
-        language
-      );
+    const review = await reviewCode(code, language);
 
     await createReview({
       projectId,
@@ -45,20 +31,17 @@ export async function POST(
       aiReview: review,
     });
 
-    return NextResponse.json(
-      review
-    );
+    return NextResponse.json(review);
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
       {
-        error:
-          "Review generation failed",
+        error: "Review generation failed",
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

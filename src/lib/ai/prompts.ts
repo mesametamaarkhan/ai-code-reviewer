@@ -1,7 +1,4 @@
-export function buildReviewPrompt(
-  code: string,
-  language: string
-) {
+export function buildReviewPrompt(code: string, language: string) {
   return `
 You are a senior software engineer and code reviewer.
 

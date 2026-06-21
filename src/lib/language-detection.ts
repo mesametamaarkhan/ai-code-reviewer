@@ -1,11 +1,5 @@
-export function detectLanguage(
-  filename: string
-) {
-  const extension =
-    filename
-      .split(".")
-      .pop()
-      ?.toLowerCase();
+export function detectLanguage(filename: string) {
+  const extension = filename.split(".").pop()?.toLowerCase();
 
   switch (extension) {
     case "ts":
