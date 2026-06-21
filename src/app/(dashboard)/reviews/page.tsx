@@ -36,19 +36,27 @@ export default async function ReviewsPage() {
                     }
                   </h2>
 
-                  <div className="mt-2 flex gap-6 text-sm text-muted-foreground">
-                    <span>
-                      Score:
-                      {" "}
-                      {
-                        review.score
-                      }
+                  <div className="mt-3 flex items-center gap-2 flex-wrap">
+                    <span
+                      className={`rounded-full px-3 py-1 text-sm font-medium border ${
+                        (review.score ?? 0) >= 80
+                          ? "bg-green-100 text-green-700 border-green-200"
+                          : (review.score ?? 0) >= 60
+                          ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+                          : "bg-red-100 text-red-700 border-red-200"
+                      }`}
+                    >
+                      Score {review.score}
                     </span>
 
-                    <span>
-                      {
-                        review.language
-                      }
+                    <span className="rounded-full border px-3 py-1 text-sm font-medium">
+                      {review.language}
+                    </span>
+
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(
+                        review.created_at
+                      ).toLocaleDateString()}
                     </span>
                   </div>
                 </div>

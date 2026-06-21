@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function createReview({
   projectId,
@@ -105,4 +106,24 @@ export async function getProjectReviews(
   }
 
   return data;
+}
+
+export async function deleteReview(
+  reviewId: string
+) {
+  const supabase =
+    await createClient();
+
+  const { error } =
+    await supabase
+      .from("reviews")
+      .delete()
+      .eq("id", reviewId);
+
+  if (error) {
+    throw error;
+  }
+
+  revalidatePath("/reviews");
+  revalidatePath("/dashboard");
 }

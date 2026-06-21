@@ -2,6 +2,11 @@ import {
   getReviewById,
 } from "@/actions/reviews";
 
+import CodeBlock
+  from "@/components/code-block";
+
+import DeleteReviewButton from "@/components/delete-review-button";
+
 export default async function ReviewDetailsPage({
   params,
 }: {
@@ -27,18 +32,24 @@ export default async function ReviewDetailsPage({
 
   return (
     <div className="p-10 space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold">
-          Review Details
-        </h1>
+      <div className="flex items-center justify-between">
+        <div>
+            <h1 className="text-4xl font-bold">
+            Review Details
+            </h1>
 
-        <p className="mt-2 text-muted-foreground">
-          {
-            review.projects
-              ?.name
-          }
-        </p>
-      </div>
+            <p className="mt-2 text-muted-foreground">
+            {
+                review.projects?.[0]
+                ?.name
+            }
+            </p>
+        </div>
+
+        <DeleteReviewButton
+            reviewId={review.id}
+        />
+        </div>
 
       <div className="border rounded p-6">
         <h2 className="font-semibold">
@@ -88,15 +99,16 @@ export default async function ReviewDetailsPage({
         }
       />
 
-      <div className="border rounded p-6">
-        <h2 className="font-semibold mb-4">
-          Original Code
-        </h2>
+        <div className="border rounded p-6">
+            <h2 className="font-semibold mb-4">
+                Original Code
+            </h2>
 
-        <pre className="overflow-auto whitespace-pre-wrap">
-          {review.code}
-        </pre>
-      </div>
+            <CodeBlock
+                code={review.code}
+                language={review.language}
+            />
+        </div>
     </div>
   );
 }
