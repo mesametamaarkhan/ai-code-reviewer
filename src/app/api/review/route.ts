@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { reviewCode }
   from "@/lib/ai/review-service";
 
+import { createReview }
+  from "@/actions/reviews";
+
 export async function POST(
   request: Request
 ) {
@@ -13,6 +16,7 @@ export async function POST(
     const {
       code,
       language,
+      projectId,
     } = body;
 
     const review =
@@ -20,6 +24,14 @@ export async function POST(
         code,
         language
       );
+
+    await createReview({
+      projectId,
+      language,
+      code,
+      score: review.score,
+      aiReview: review,
+    });
 
     return NextResponse.json(
       review
