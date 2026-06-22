@@ -3,55 +3,73 @@
 import { useState } from "react";
 import { createProject } from "@/actions/projects";
 import { useRouter } from "next/navigation";
+import { Plus, FolderPlus } from "lucide-react";
 
 export default function ProjectForm() {
   const router = useRouter();
   const [name, setName] = useState("");
-
   const [description, setDescription] = useState("");
-
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  async function handleSubmit() {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!name.trim()) {
+      setError("Project name is required");
+      return;
+    }
     setLoading(true);
 
     try {
       await createProject(name, description);
-
+      setName("");
+      setDescription("");
       router.refresh();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      setError("Failed to create project");
     }
 
     setLoading(false);
   }
 
   return (
-    <div className="space-y-4 rounded-[1.75rem] border border-white/10 bg-slate-950/90 p-6 shadow-lg shadow-slate-950/10">
-      <h2 className="text-xl font-semibold text-white">New Project</h2>
-      <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-white/[0.06] bg-[#0d121e]/60 p-6 backdrop-blur-sm">
+      <div className="flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+          <FolderPlus className="h-4 w-4" />
+        </div>
+        <h2 className="text-base font-semibold text-white">New Project</h2>
+      </div>
+
+      <div className="space-y-3">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Project Name"
+          placeholder="Project name"
           className="input-field"
         />
-
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description"
-          className="input-field min-h-[120px] resize-none"
+          placeholder="Description (optional)"
+          rows={3}
+          className="input-field resize-none"
         />
 
+        {error && (
+          <p className="text-xs text-rose-400">{error}</p>
+        )}
+
         <button
-          onClick={handleSubmit}
+          type="submit"
           disabled={loading}
-          className="btn-primary w-full"
+          className="btn-primary w-full gap-2"
         >
+          <Plus className="h-4 w-4" />
           {loading ? "Creating..." : "Create Project"}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

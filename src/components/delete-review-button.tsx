@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { deleteReview } from "@/actions/reviews";
+import { Trash2 } from "lucide-react";
 
 interface Props {
   reviewId: string;
@@ -15,7 +16,7 @@ export default function DeleteReviewButton({ reviewId }: Props) {
   const [pending, startTransition] = useTransition();
 
   function handleDelete() {
-    const confirmed = window.confirm("Delete this review?");
+    const confirmed = window.confirm("Delete this review? This cannot be undone.");
 
     if (!confirmed) {
       return;
@@ -34,9 +35,10 @@ export default function DeleteReviewButton({ reviewId }: Props) {
     <button
       onClick={handleDelete}
       disabled={pending}
-      className="rounded border px-4 py-2"
+      className="btn-danger gap-2"
     >
-      {pending ? "Deleting..." : "Delete Review"}
+      <Trash2 className="h-4 w-4" />
+      {pending ? "Deleting..." : "Delete"}
     </button>
   );
 }

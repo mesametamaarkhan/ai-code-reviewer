@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import ReviewResultCard from "./review-result";
 import { detectLanguage } from "@/lib/language-detection";
+import { FileUp, Code as Code2, ChevronDown, Loader as Loader2, Play, FolderKanban } from "lucide-react";
 
 interface Project {
   id: string;
@@ -30,7 +31,7 @@ export default function ReviewForm({
 
   const loadingMessages = useMemo(
     () => [
-      "Analyzing code...",
+      "Analyzing code structure...",
       "Checking for bugs...",
       "Reviewing security issues...",
       "Inspecting performance...",
@@ -107,21 +108,32 @@ export default function ReviewForm({
 
   return (
     <div className="space-y-8">
+      <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-emerald-400/70">
+            Analysis
+          </p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">
+            New Review
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Paste code or upload a file for AI-driven feedback.
+          </p>
+        </div>
+      </section>
+
       <section className="surface">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h1 className="text-4xl font-semibold text-white">New Review</h1>
-            <p className="mt-2 max-w-2xl text-slate-400">
-              Paste code, upload a file, and get fast AI-driven review feedback.
-            </p>
-          </div>
-          <div className="grid w-full max-w-md gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm text-slate-300">Project</span>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="relative">
+            <label className="mb-1.5 block text-xs font-medium text-slate-400">
+              Project
+            </label>
+            <div className="relative">
+              <FolderKanban className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <select
                 value={projectId}
                 onChange={(e) => setProjectId(e.target.value)}
-                className="input-field mt-2"
+                className="input-field appearance-none !pl-10"
               >
                 <option value="">Select Project</option>
                 {projects.map((project) => (
@@ -130,69 +142,102 @@ export default function ReviewForm({
                   </option>
                 ))}
               </select>
+              <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 pointer-events-none" />
+            </div>
+          </div>
+          <div className="relative">
+            <label className="mb-1.5 block text-xs font-medium text-slate-400">
+              Language
             </label>
-            <label className="block">
-              <span className="text-sm text-slate-300">Language</span>
+            <div className="relative">
+              <Code2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="input-field mt-2"
+                className="input-field appearance-none !pl-10"
               >
                 <option>typescript</option>
                 <option>javascript</option>
                 <option>python</option>
                 <option>java</option>
               </select>
+              <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 pointer-events-none" />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-slate-400">
+              Upload File
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.08] bg-[#0a0f1a]/90 px-4 py-3 text-sm text-slate-400 transition hover:border-emerald-500/30 hover:text-slate-300">
+              <FileUp className="h-4 w-4" />
+              <span>Choose file...</span>
+              <input
+                type="file"
+                accept=".ts,.tsx,.js,.jsx,.py,.java,.go,.rs,.cpp,.c"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
             </label>
           </div>
         </div>
       </section>
 
-      <section className="surface">
-        <div className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-slate-300">Upload Source File</label>
-            <input
-              type="file"
-              accept=".ts,.tsx,.js,.jsx,.py,.java,.go,.rs,.cpp,.c"
-              onChange={handleFileUpload}
-              className="mt-3 w-full rounded-2xl border border-slate-700/70 bg-slate-950/90 px-4 py-3 text-sm text-slate-100 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20"
-            />
-          </div>
-          <div className="rounded-[1.75rem] overflow-hidden border border-white/10 bg-slate-950/85 shadow-lg shadow-slate-950/20">
-            <Editor
-              height="520px"
-              language={language}
-              value={code}
-              onChange={(value) => setCode(value ?? "")}
-              theme="vs-dark"
-              options={{
-                minimap: { enabled: false },
-                fontSize: 14,
-                automaticLayout: true,
-                scrollBeyondLastLine: false,
-              }}
-            />
-          </div>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              onClick={handleReview}
-              disabled={loading}
-              className="btn-primary w-full sm:w-auto"
-            >
-              {loading ? loadingMessage : "Review Code"}
-            </button>
-            {loading && (
-              <div className="rounded-3xl border border-slate-700/70 bg-slate-900/80 p-4 text-slate-200">
-                <p className="font-medium">{loadingMessage}</p>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
-                  <div className="h-full w-2/3 animate-pulse bg-cyan-400" />
-                </div>
+      <section className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0d121e]/80 shadow-lg shadow-black/20">
+        <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
+          <div className="h-2.5 w-2.5 rounded-full bg-rose-500/60" />
+          <div className="h-2.5 w-2.5 rounded-full bg-amber-500/60" />
+          <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/60" />
+          <span className="ml-2 text-[11px] text-slate-500">editor</span>
+        </div>
+        <Editor
+          height="480px"
+          language={language}
+          value={code}
+          onChange={(value) => setCode(value ?? "")}
+          theme="vs-dark"
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            automaticLayout: true,
+            scrollBeyondLastLine: false,
+            padding: { top: 16 },
+          }}
+        />
+      </section>
+
+      <div className="flex items-center gap-4">
+        <button
+          onClick={handleReview}
+          disabled={loading || !code.trim()}
+          className="btn-primary gap-2 disabled:opacity-40 disabled:hover:translate-y-0"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {loadingMessage}
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />
+              Review Code
+            </>
+          )}
+        </button>
+      </div>
+
+      {loading && (
+        <div className="surface">
+          <div className="flex items-center gap-3">
+            <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-white">{loadingMessage}</p>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className="h-full w-2/3 animate-pulse rounded-full bg-emerald-500" />
               </div>
-            )}
+            </div>
           </div>
         </div>
-      </section>
+      )}
 
       {result && <ReviewResultCard review={result} />}
     </div>

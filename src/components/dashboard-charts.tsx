@@ -7,22 +7,12 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
 } from "recharts";
 
-type LanguageChartData = {
-  language: string;
-  count: number;
-};
-
-type ProjectChartData = {
-  project: string;
-  count: number;
-};
-
-type ScoreChartData = {
-  range: string;
-  count: number;
-};
+type LanguageChartData = { language: string; count: number };
+type ProjectChartData = { project: string; count: number };
+type ScoreChartData = { range: string; count: number };
 
 interface Props {
   languageData: LanguageChartData[];
@@ -30,56 +20,51 @@ interface Props {
   scoreData: ScoreChartData[];
 }
 
-export default function DashboardCharts({
-  languageData,
-  projectData,
-  scoreData,
-}: Props) {
+const tooltipStyle = {
+  backgroundColor: "#0d121e",
+  border: "1px solid rgba(148,163,184,0.1)",
+  borderRadius: "0.75rem",
+  color: "#e8ecf1",
+  fontSize: "12px",
+};
+
+export default function DashboardCharts({ languageData, projectData, scoreData }: Props) {
   return (
-    <div className="space-y-8">
-      <div className="rounded-lg border p-6">
-        <h2 className="mb-4 text-xl font-semibold">Reviews by Language</h2>
+    <div className="space-y-4">
+      <Chart title="Reviews by Language" data={languageData} dataKey="language" />
+      <Chart title="Reviews per Project" data={projectData} dataKey="project" />
+      <Chart title="Score Distribution" data={scoreData} dataKey="range" />
+    </div>
+  );
+}
 
-        <div className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={languageData}>
-              <XAxis dataKey="language" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="rounded-lg border p-6">
-        <h2 className="mb-4 text-xl font-semibold">Reviews per Project</h2>
-
-        <div className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={projectData}>
-              <XAxis dataKey="project" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="rounded-lg border p-6">
-        <h2 className="mb-4 text-xl font-semibold">Score Distribution</h2>
-
-        <div className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={scoreData}>
-              <XAxis dataKey="range" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+function Chart({ title, data, dataKey }: { title: string; data: { count: number }[]; dataKey: string }) {
+  return (
+    <div className="surface">
+      <h3 className="mb-5 text-sm font-semibold text-white">{title}</h3>
+      <div className="h-48">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} barCategoryGap="35%">
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.06)" vertical={false} />
+            <XAxis
+              dataKey={dataKey}
+              tick={{ fill: "#8896ab", fontSize: 11 }}
+              axisLine={{ stroke: "rgba(148,163,184,0.08)" }}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: "#8896ab", fontSize: 11 }}
+              axisLine={false}
+              tickLine={false}
+              width={28}
+            />
+            <Tooltip
+              contentStyle={tooltipStyle}
+              cursor={{ fill: "rgba(16,185,129,0.04)" }}
+            />
+            <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

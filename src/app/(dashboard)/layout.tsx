@@ -20,10 +20,10 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex bg-slate-950/90">
+    <div className="min-h-screen flex bg-[#0a0f1a]">
       <Sidebar />
 
-      <main className="flex-1 p-8 lg:p-10">
+      <main className="flex-1 p-6 lg:p-10">
         <div className="mx-auto max-w-7xl">{children}</div>
       </main>
     </div>
