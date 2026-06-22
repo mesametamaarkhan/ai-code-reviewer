@@ -9,7 +9,6 @@ export default function SignupPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   async function handleSignup() {
@@ -34,30 +33,41 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-sm space-y-4">
-        <h1 className="text-3xl font-bold">Create Account</h1>
+    <div className="flex min-h-screen items-center justify-center px-6 py-16">
+      <div className="w-full max-w-md rounded-[2rem] border border-white/10 bg-slate-950/95 p-10 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
+        <div className="space-y-6">
+          <div>
+            <p className="text-sm uppercase tracking-[0.25em] text-cyan-300/80">Get started</p>
+            <h1 className="mt-3 text-4xl font-semibold text-white">Create Account</h1>
+            <p className="mt-2 text-slate-400">Join and start reviewing code with precise AI guidance.</p>
+          </div>
 
-        <input
-          className="w-full border p-2 rounded"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <div className="space-y-4">
+            <input
+              className="input-field"
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              className="input-field"
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-        <input
-          className="w-full border p-2 rounded"
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <button
+            onClick={handleSignup}
+            disabled={loading}
+            className="btn-primary w-full"
+          >
+            {loading ? "Creating..." : "Create Account"}
+          </button>
 
-        <button
-          onClick={handleSignup}
-          disabled={loading}
-          className="w-full rounded bg-black text-white p-2"
-        >
-          {loading ? "Creating..." : "Create Account"}
-        </button>
+          <p className="text-center text-sm text-slate-400">
+            Already registered? <a href="/login" className="text-cyan-300 hover:text-cyan-200">Login</a>
+          </p>
+        </div>
       </div>
     </div>
   );

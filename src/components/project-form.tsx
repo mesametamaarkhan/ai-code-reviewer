@@ -27,28 +27,31 @@ export default function ProjectForm() {
   }
 
   return (
-    <div className="space-y-4">
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Project Name"
-        className="border rounded p-2 w-full"
-      />
+    <div className="space-y-4 rounded-[1.75rem] border border-white/10 bg-slate-950/90 p-6 shadow-lg shadow-slate-950/10">
+      <h2 className="text-xl font-semibold text-white">New Project</h2>
+      <div className="space-y-4">
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Project Name"
+          className="input-field"
+        />
 
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description"
-        className="border rounded p-2 w-full"
-      />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Description"
+          className="input-field min-h-[120px] resize-none"
+        />
 
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="bg-black text-white px-4 py-2 rounded"
-      >
-        {loading ? "Creating..." : "Create Project"}
-      </button>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="btn-primary w-full"
+        >
+          {loading ? "Creating..." : "Create Project"}
+        </button>
+      </div>
     </div>
   );
 }
